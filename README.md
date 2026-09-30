@@ -124,10 +124,11 @@ own reliability, which no caller can audit. A citation can be followed.
 
 ## Provenance
 
-A sanitised extract from a private research-operations system. Vendor names,
-endpoints and infrastructure are removed. The digest binding, the independent
-source counting, the expiry rules and the audit trail are the real
-implementation.
+A standalone public proof inspired by constraints from private research and
+acquisition tooling: evidence-backed claims, explicit human review before
+external action, expiry, and replay resistance. Vendor names, endpoints, and
+infrastructure are removed. The digest-binding module is intentionally isolated
+for review; it should not be read as a copy of the full private system.
 
 The full system is not public.
 
