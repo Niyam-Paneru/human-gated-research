@@ -1,0 +1,22 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/python:3.12
+    steps:
+      - checkout
+      - run:
+          name: Install test dependency
+          command: pip install pytest
+      - run:
+          name: Run tests
+          command: python -m pytest
+      - run:
+          name: Run demo
+          command: PYTHONPATH=src python -m research_gate.demo
+
+workflows:
+  build-and-test:
+    jobs:
+      - test
