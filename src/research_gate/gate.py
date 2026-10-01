@@ -37,6 +37,11 @@ class ActionGate:
     def approve(self, proposal: Proposal, approved_by: str) -> Approval:
         if not approved_by.strip():
             raise PolicyError("an approval must name a person")
+
+        # Approval is a public entry point too. Reuse the proposal invariant here
+        # so callers cannot bypass the evidence requirement by skipping propose().
+        self.propose(proposal)
+
         approval = Approval(
             proposal_id=proposal.id,
             payload_digest=proposal.payload_digest,
