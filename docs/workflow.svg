@@ -1,34 +1,125 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="t d">
-<title id="t">Human gated research architecture</title><desc id="d">Evidence becomes a proposal; human approval binds to the exact proposal digest before one irreversible action is authorized.</desc>
-<rect width="1200" height="520" fill="#f5f5f1"/>
-<text x="56" y="62" fill="#71716a" font-family="Arial,sans-serif" font-size="13" letter-spacing="3">HUMAN-GATED RESEARCH</text>
-<text x="56" y="105" fill="#171714" font-family="Georgia,serif" font-size="34">Research can roam. Authority stays narrow.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Human-gated research authorization flow</title>
+  <desc id="desc">Evidence becomes a proposal. Read-only work bypasses approval. Irreversible actions are digested, reviewed by a named human, and authorized once only if approval exists, the digest still matches, the approval is live, and the proposal has not already acted. Each failed check refuses the action.</desc>
 
-<rect x="58" y="170" width="200" height="100" rx="14" fill="#fff" stroke="#171714" stroke-width="2"/>
-<text x="82" y="202" fill="#71716a" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">EVIDENCE</text>
-<text x="82" y="234" fill="#171714" font-family="Arial,sans-serif" font-size="20" font-weight="700">sources + claims</text>
+  <rect width="1200" height="760" fill="#ffffff"/>
 
-<rect x="330" y="145" width="235" height="150" rx="16" fill="#fff" stroke="#171714" stroke-width="2"/>
-<text x="355" y="178" fill="#71716a" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">PROPOSAL</text>
-<text x="355" y="210" fill="#171714" font-family="Georgia,serif" font-size="24">Exact content.</text>
-<text x="355" y="247" fill="#4e4e48" font-family="Arial,sans-serif" font-size="14">target</text>
-<text x="420" y="247" fill="#4e4e48" font-family="Arial,sans-serif" font-size="14">rationale</text>
-<text x="495" y="247" fill="#4e4e48" font-family="Arial,sans-serif" font-size="14">evidence</text>
+  <style>
+    .label { font: 600 13px Arial, sans-serif; fill: #111827; letter-spacing: .04em; }
+    .body { font: 14px Arial, sans-serif; fill: #374151; }
+    .small { font: 12px Arial, sans-serif; fill: #4b5563; }
+    .node { fill: #ffffff; stroke: #111827; stroke-width: 1.6; }
+    .decision { fill: #f9fafb; stroke: #111827; stroke-width: 1.6; }
+    .allow { fill: #f0fdf4; stroke: #15803d; stroke-width: 1.6; }
+    .refuse { fill: #fef2f2; stroke: #b91c1c; stroke-width: 1.6; }
+    .arrow { fill: none; stroke: #111827; stroke-width: 1.6; marker-end: url(#arrow); }
+    .branch { fill: none; stroke: #6b7280; stroke-width: 1.4; marker-end: url(#arrow-muted); }
+  </style>
 
-<rect x="640" y="145" width="235" height="150" rx="16" fill="#fff" stroke="#171714" stroke-width="2"/>
-<text x="665" y="178" fill="#71716a" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">HUMAN AUTHORITY</text>
-<text x="665" y="210" fill="#171714" font-family="Georgia,serif" font-size="24">Approve this digest.</text>
-<text x="665" y="247" fill="#4e4e48" font-family="Arial,sans-serif" font-size="14">expires</text>
-<text x="735" y="247" fill="#4e4e48" font-family="Arial,sans-serif" font-size="14">one use</text>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#111827"/>
+    </marker>
+    <marker id="arrow-muted" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#6b7280"/>
+    </marker>
+  </defs>
 
-<rect x="950" y="170" width="190" height="100" rx="14" fill="#e4edb0" stroke="#596e35" stroke-width="2"/>
-<text x="975" y="202" fill="#596e35" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">ACTION</text>
-<text x="975" y="234" fill="#171714" font-family="Arial,sans-serif" font-size="20" font-weight="700">authorize once</text>
+  <text x="52" y="48" class="label" font-size="16">HUMAN-GATED RESEARCH · AUTHORIZATION PATH</text>
+  <text x="52" y="75" class="body">The proposal id is not the authority. The reviewed content digest is.</text>
 
-<g stroke="#171714" stroke-width="2" fill="none"><path d="M258 220 H330"/><path d="M565 220 H640"/><path d="M875 220 H950"/></g>
-<g fill="#171714"><path d="M322 214 l10 6 -10 6z"/><path d="M632 214 l10 6 -10 6z"/><path d="M942 214 l10 6 -10 6z"/></g>
+  <line x1="790" y1="98" x2="790" y2="710" stroke="#d97706" stroke-width="1.5" stroke-dasharray="7 7"/>
+  <text x="804" y="119" class="small" fill="#92400e">human authority boundary</text>
 
-<rect x="330" y="360" width="545" height="72" rx="14" fill="#f1d9dc" stroke="#a4243b" stroke-width="2"/>
-<text x="355" y="390" fill="#a4243b" font-family="Arial,sans-serif" font-size="12" letter-spacing="2">CHANGED AFTER APPROVAL?</text>
-<text x="355" y="418" fill="#171714" font-family="Georgia,serif" font-size="20">Digest mismatch → refuse.</text>
+  <rect x="52" y="145" width="160" height="68" rx="4" class="node"/>
+  <text x="72" y="173" class="label">EVIDENCE</text>
+  <text x="72" y="196" class="small">source groups + observations</text>
+
+  <rect x="272" y="145" width="178" height="68" rx="4" class="node"/>
+  <text x="292" y="173" class="label">PROPOSAL</text>
+  <text x="292" y="196" class="small">action · target · rationale · evidence</text>
+
+  <path d="M212 179 H272" class="arrow"/>
+
+  <polygon points="520,139 578,179 520,219 462,179" class="decision"/>
+  <text x="520" y="174" text-anchor="middle" class="small">irreversible</text>
+  <text x="520" y="191" text-anchor="middle" class="small">action?</text>
+  <path d="M450 179 H462" class="arrow"/>
+
+  <path d="M520 219 V292 H346" class="branch"/>
+  <text x="532" y="252" class="small">NO · read_only</text>
+  <rect x="178" y="268" width="168" height="54" rx="4" class="allow"/>
+  <text x="262" y="290" text-anchor="middle" class="label" fill="#166534">ALLOW READ-ONLY</text>
+  <text x="262" y="309" text-anchor="middle" class="small">record audit outcome</text>
+
+  <path d="M578 179 H618" class="arrow"/>
+  <text x="588" y="164" class="small">YES</text>
+
+  <rect x="618" y="145" width="148" height="68" rx="4" class="node"/>
+  <text x="638" y="173" class="label">DIGEST</text>
+  <text x="638" y="196" class="small">canonical proposal payload</text>
+
+  <rect x="816" y="145" width="180" height="68" rx="4" class="node"/>
+  <text x="836" y="173" class="label">HUMAN APPROVAL</text>
+  <text x="836" y="196" class="small">name · digest · granted_at · TTL</text>
+
+  <path d="M766 179 H816" class="arrow"/>
+
+  <rect x="1038" y="145" width="120" height="68" rx="4" class="node"/>
+  <text x="1098" y="173" text-anchor="middle" class="label">AUTHORIZE</text>
+  <text x="1098" y="196" text-anchor="middle" class="small">irreversible action</text>
+  <path d="M996 179 H1038" class="arrow"/>
+
+  <path d="M906 213 V260" class="branch"/>
+  <text x="918" y="239" class="small">no approval record</text>
+  <rect x="808" y="260" width="196" height="54" rx="4" class="refuse"/>
+  <text x="906" y="283" text-anchor="middle" class="label" fill="#991b1b">REFUSE · no_approval</text>
+  <text x="906" y="302" text-anchor="middle" class="small">irreversible action stops</text>
+
+  <path d="M1098 213 V349" class="arrow"/>
+
+  <polygon points="1098,349 1154,385 1098,421 1042,385" class="decision"/>
+  <text x="1098" y="381" text-anchor="middle" class="small">already</text>
+  <text x="1098" y="397" text-anchor="middle" class="small">acted?</text>
+
+  <path d="M1042 385 H928" class="branch"/>
+  <text x="980" y="373" class="small">YES</text>
+  <rect x="728" y="358" width="200" height="54" rx="4" class="refuse"/>
+  <text x="828" y="381" text-anchor="middle" class="label" fill="#991b1b">REFUSE · already_acted</text>
+  <text x="828" y="400" text-anchor="middle" class="small">replay blocked</text>
+
+  <path d="M1098 421 V465" class="arrow"/>
+  <text x="1110" y="447" class="small">NO</text>
+
+  <polygon points="1098,465 1154,501 1098,537 1042,501" class="decision"/>
+  <text x="1098" y="497" text-anchor="middle" class="small">digest</text>
+  <text x="1098" y="513" text-anchor="middle" class="small">matches?</text>
+
+  <path d="M1042 501 H928" class="branch"/>
+  <text x="980" y="489" class="small">NO</text>
+  <rect x="690" y="474" width="238" height="54" rx="4" class="refuse"/>
+  <text x="809" y="497" text-anchor="middle" class="label" fill="#991b1b">REFUSE · proposal changed</text>
+  <text x="809" y="516" text-anchor="middle" class="small">approved digest ≠ current digest</text>
+
+  <path d="M1098 537 V581" class="arrow"/>
+  <text x="1110" y="563" class="small">YES</text>
+
+  <polygon points="1098,581 1154,617 1098,653 1042,617" class="decision"/>
+  <text x="1098" y="613" text-anchor="middle" class="small">approval</text>
+  <text x="1098" y="629" text-anchor="middle" class="small">live?</text>
+
+  <path d="M1042 617 H928" class="branch"/>
+  <text x="980" y="605" class="small">NO</text>
+  <rect x="728" y="590" width="200" height="54" rx="4" class="refuse"/>
+  <text x="828" y="613" text-anchor="middle" class="label" fill="#991b1b">REFUSE · approval_expired</text>
+  <text x="828" y="632" text-anchor="middle" class="small">fresh approval required</text>
+
+  <path d="M1098 653 V688 H1032" class="arrow"/>
+  <text x="1110" y="677" class="small">YES</text>
+  <rect x="832" y="665" width="200" height="58" rx="4" class="allow"/>
+  <text x="932" y="689" text-anchor="middle" class="label" fill="#166534">ALLOW ONCE</text>
+  <text x="932" y="708" text-anchor="middle" class="small">mark proposal id acted + audit</text>
+
+  <text x="52" y="713" class="small">Digest input includes id, claim id, action, target, rationale, and normalized evidence.</text>
+  <text x="52" y="733" class="small">The public demo stores approvals and audit history in memory; it does not authenticate the approver identity.</text>
 </svg>
