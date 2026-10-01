@@ -11,6 +11,15 @@ class ActionKind(str, Enum):
     SPEND_MONEY = "spend_money"
 
 
+IRREVERSIBLE_ACTIONS = frozenset(
+    {
+        ActionKind.SUBMIT_PUBLIC,
+        ActionKind.CONTACT_THIRD_PARTY,
+        ActionKind.SPEND_MONEY,
+    }
+)
+
+
 class Outcome(str, Enum):
     PROPOSED = "proposed"
     APPROVED = "approved"
