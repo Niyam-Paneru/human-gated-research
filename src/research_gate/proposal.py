@@ -31,6 +31,7 @@ class Proposal:
                     "source": item.source,
                     "observed_at": item.observed_at,
                     "summary": item.summary,
+                    "independent_group": item.independent_group,
                 }
                 for item in ordered
             ],
