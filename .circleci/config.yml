@@ -10,11 +10,21 @@ jobs:
           name: Install test dependency
           command: pip install pytest
       - run:
-          name: Run tests
+          name: Compile public source
+          command: python -m compileall -q src
+      - run:
+          name: Run behavior tests
           command: python -m pytest
       - run:
-          name: Run demo
+          name: Run walkthrough
           command: PYTHONPATH=src python -m research_gate.demo
+      - run:
+          name: Verify public proof structure
+          command: |
+            test -s docs/workflow.svg
+            test -s docs/invariants.md
+            test -s docs/failure-modes.md
+            test -s SECURITY.md
 
 workflows:
   build-and-test:
