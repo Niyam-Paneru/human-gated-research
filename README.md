@@ -38,4 +38,6 @@ Independent sources are at least inspectable.
 
 The private systems that inspired this repo add discovery, browser tooling, and operator workflows. This public slice keeps the trust boundary visible.
 
+Want to audit the authority boundary? Read the [invariants](docs/invariants.md), [failure modes](docs/failure-modes.md), [design decisions](docs/decisions.md), and [provenance](PROVENANCE.md).
+
 > The human approves the plan, not whatever the plan mutates into later.
