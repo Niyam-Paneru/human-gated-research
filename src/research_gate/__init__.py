@@ -3,7 +3,7 @@
 from .digest import canonical_json, digest
 from .evidence import rank_claims
 from .gate import ActionGate, Approval, PolicyError
-from .models import ActionKind, Claim, Evidence, Outcome
+from .models import ActionKind, Claim, Evidence, IRREVERSIBLE_ACTIONS, Outcome
 from .proposal import Proposal
 
 __all__ = [
@@ -12,6 +12,7 @@ __all__ = [
     "Approval",
     "Claim",
     "Evidence",
+    "IRREVERSIBLE_ACTIONS",
     "Outcome",
     "PolicyError",
     "Proposal",
