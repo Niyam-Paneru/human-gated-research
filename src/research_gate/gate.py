@@ -58,7 +58,7 @@ class ActionGate:
 
     def authorize(self, proposal: Proposal) -> tuple[bool, str]:
         if proposal.action not in IRREVERSIBLE_ACTIONS:
-            self._record(proposal.id, Outcome.APPROVED)
+            self._record(proposal.id, Outcome.READ_ONLY)
             return True, "read_only"
 
         approval = self._approvals.get(proposal.id)
