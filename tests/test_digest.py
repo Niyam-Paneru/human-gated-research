@@ -32,3 +32,9 @@ def test_target_change_changes_digest():
         evidence=a.evidence,
     )
     assert a.payload_digest != b.payload_digest
+
+def test_independent_group_change_changes_digest():
+    a = proposal((Evidence("source-a", 1.0, "same", independent_group="group-1"),))
+    b = proposal((Evidence("source-a", 1.0, "same", independent_group="group-2"),))
+    assert a.payload_digest != b.payload_digest
+
