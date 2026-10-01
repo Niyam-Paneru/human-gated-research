@@ -31,13 +31,15 @@ Approval also requires a non-empty `approved_by` value. In this demo that value 
 
 `rank_claims()` prefers the number of **independent source groups** and uses newest evidence only as a tie-breaker. Multiple citations assigned to the same independent group count once.
 
-`ActionGate.propose()` rejects a proposal with no evidence. The approval digest includes each evidence item's source, timestamp, summary, and independent group, so changing the evidence grouping also changes the approval identity.
+`ActionGate.propose()` rejects a proposal with no evidence, and `ActionGate.approve()` reuses that same check. Skipping the explicit `propose()` call therefore cannot create an approval for an evidence-free irreversible proposal.
+
+The approval digest includes each evidence item's source, timestamp, summary, and independent group, so changing the evidence grouping also changes the approval identity.
 
 ## Where to inspect
 
 - [`src/research_gate/proposal.py`](src/research_gate/proposal.py) — approval-relevant proposal payload.
 - [`src/research_gate/digest.py`](src/research_gate/digest.py) — canonical JSON and SHA-256 digest.
-- [`src/research_gate/gate.py`](src/research_gate/gate.py) — approval TTL, refusal paths, replay prevention, and audit history.
+- [`src/research_gate/gate.py`](src/research_gate/gate.py) — evidence requirement, approval TTL, refusal paths, replay prevention, and audit history.
 - [`src/research_gate/evidence.py`](src/research_gate/evidence.py) — independent-corroboration ranking.
 - [`src/research_gate/demo.py`](src/research_gate/demo.py) — runnable walkthrough of mutation, missing approval, replay, expiry, and read-only behavior.
 
@@ -52,10 +54,11 @@ PYTHONPATH=src python -m research_gate.demo
 
 CircleCI additionally compiles `src/` and checks that the public proof files are present.
 
-The diagram's decision states are covered directly by tests:
+The diagram's decision states and the approval-entry invariant are covered directly by tests:
 
-| Diagram state | Test |
+| Behavior | Test |
 |---|---|
+| evidence-free approval blocked | `test_approval_cannot_bypass_the_evidence_requirement` |
 | read-only bypass | `test_read_only_does_not_require_approval` |
 | no approval | `test_an_unapproved_irreversible_action_is_refused` |
 | changed proposal / digest mismatch | `test_editing_a_proposal_after_approval_invalidates_it` |
