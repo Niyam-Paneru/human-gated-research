@@ -1,6 +1,6 @@
 # human-gated-research
 
-**Evidence-ranked research proposals where every irreversible action needs a digest-matched human approval.**
+**Evidence-ranked research proposals where every irreversible action needs a digest-matched human approval.**\n\n**Research can be autonomous. Sending the email still needs an adult in the room.**
 
 An agent that gathers information and an agent that acts on the world are
 different capabilities with different risk profiles. This module separates them
@@ -12,7 +12,7 @@ gather ──▶ rank ──▶ propose  ‖  human decides  ‖  act
                    the only crossing point
 ```
 
-![Architecture: sources are gathered, claims ranked by independent source count, and a proposal created. A human approval bound to the proposal digest is the only crossing point before an irreversible action. Read-only actions bypass the gate.](docs/architecture.svg)
+```text\nREAD SIDE                         WRITE SIDE\ngather -> rank -> proposal || HUMAN APPROVAL || action\n                           exact digest only\n```
 
 ```bash
 pip install pytest
