@@ -4,7 +4,7 @@ import time
 from dataclasses import dataclass, field
 from typing import Callable
 
-from .models import Outcome
+from .models import IRREVERSIBLE_ACTIONS, Outcome
 from .proposal import Proposal
 
 
@@ -52,6 +52,10 @@ class ActionGate:
         self._history.append((proposal_id, outcome, ""))
 
     def authorize(self, proposal: Proposal) -> tuple[bool, str]:
+        if proposal.action not in IRREVERSIBLE_ACTIONS:
+            self._record(proposal.id, Outcome.APPROVED)
+            return True, "read_only"
+
         approval = self._approvals.get(proposal.id)
 
         if proposal.id in self._acted:
