@@ -4,7 +4,41 @@
 
 This public Python slice separates low-risk research from actions that change the outside world. Evidence can be ranked and read-only work can proceed without an approval round-trip. For `submit_public`, `contact_third_party`, and `spend_money`, authorization is granted only when a current proposal still matches a named human approval and that approval has not expired or already been used.
 
-![Human-gated authorization flow](docs/workflow.svg)
+```mermaid
+sequenceDiagram
+    participant R as Research path
+    participant G as ActionGate
+    participant H as Human reviewer
+    participant E as Effect boundary
+
+    R->>G: authorize(read-only action)
+    G-->>R: allow read_only; no approval round-trip
+
+    R->>G: propose(evidence + irreversible action)
+    G->>G: require evidence and compute digest
+    G-->>R: proposal + canonical digest
+    R-->>H: present proposal for review
+    opt Human approves the exact proposal
+        H->>G: approve(proposal, approved_by)
+        G->>G: re-check evidence; store digest + TTL
+    end
+
+    Note over R,G: Content may change after approval; authorize checks the current digest.
+    R->>G: authorize(current proposal)
+    alt proposal id already acted
+        G-->>R: refuse already_acted
+    else no approval exists
+        G-->>R: refuse no_approval
+    else digest changed after approval
+        G-->>R: refuse proposal_changed_after_approval
+    else approval expired
+        G-->>R: refuse approval_expired
+    else live, matching, unused approval
+        G->>G: mark proposal id acted
+        G-->>R: allow once
+        R->>E: cross the effect boundary
+    end
+```
 
 ## The trust boundary
 
@@ -12,9 +46,9 @@ For irreversible actions, the path is:
 
 **evidence → proposal → canonical digest → named human approval → authorization checks → allow once**
 
-`Proposal.payload_digest` hashes a canonical JSON payload containing the proposal id, claim id, action, target, rationale, and normalized evidence. Changing approval-relevant content changes the digest; keeping the same proposal id does not preserve authorization.
+`Proposal.payload_digest` hashes a canonical JSON payload containing the proposal id, claim id, action, target, rationale, and normalized evidence. Changing approval-relevant content changes the digest; keeping the same proposal id does not preserve authorization. A proposal id is an identifier, not a reusable permission coupon.
 
-Authorization then checks the current state in this order:
+Authorization checks the current state in this order:
 
 | Check | Result |
 |---|---|
@@ -43,29 +77,9 @@ The approval digest includes each evidence item's source, timestamp, summary, an
 - [`src/research_gate/evidence.py`](src/research_gate/evidence.py) — independent-corroboration ranking.
 - [`src/research_gate/demo.py`](src/research_gate/demo.py) — runnable walkthrough of mutation, missing approval, replay, expiry, and read-only behavior.
 
-## Verify it
+Tests cover evidence-free approval rejection, the read-only bypass, missing approval, mutation after approval, expiry, replay refusal, one-time allowance, and the named-approver requirement.
 
-From the repository root with Python 3.10+ and `pytest` installed:
-
-```bash
-python -m pytest
-PYTHONPATH=src python -m research_gate.demo
-```
-
-CircleCI additionally compiles `src/` and checks that the public proof files are present.
-
-The diagram's decision states and the approval-entry invariant are covered directly by tests:
-
-| Behavior | Test |
-|---|---|
-| evidence-free approval blocked | `test_approval_cannot_bypass_the_evidence_requirement` |
-| read-only bypass | `test_read_only_does_not_require_approval` |
-| no approval | `test_an_unapproved_irreversible_action_is_refused` |
-| changed proposal / digest mismatch | `test_editing_a_proposal_after_approval_invalidates_it` |
-| expired approval | `test_an_expired_approval_is_refused` |
-| replay / already acted | `test_an_action_cannot_be_replayed` |
-| allowed once | `test_an_approved_action_proceeds` |
-| named approver required | `test_an_approval_must_name_a_person` |
+Verification commands and expected checks: [`docs/verification.md`](docs/verification.md).
 
 ## Boundary and provenance
 
