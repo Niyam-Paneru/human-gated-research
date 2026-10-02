@@ -15,12 +15,13 @@ sequenceDiagram
     G-->>R: allow read_only; no approval round-trip
 
     R->>G: propose(evidence + irreversible action)
-    G->>G: require evidence and compute digest
-    G-->>R: proposal + canonical digest
-    R-->>H: present proposal for review
+    G->>G: require evidence
+    G-->>R: proposal accepted
+    R-->>H: present exact proposal for review
     opt Human approves the exact proposal
         H->>G: approve(proposal, approved_by)
-        G->>G: re-check evidence; store digest + TTL
+        G->>G: re-check evidence
+        G->>G: compute/store payload_digest + TTL
     end
 
     Note over R,G: Content may change after approval; authorize checks the current digest.
