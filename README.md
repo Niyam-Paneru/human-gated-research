@@ -1,44 +1,50 @@
 # Human-Gated Research
 
-**An approval authorizes the exact proposal a person reviewed—not whatever keeps the same proposal id later.**
+Evidence-backed research with approval tied to the exact proposal a person reviewed. Read-only work can proceed; consequential actions require a current, matching, unused approval.
 
-This public Python slice separates low-risk research from actions that change the outside world. Evidence can be ranked and read-only work can proceed without an approval round-trip. For `submit_public`, `contact_third_party`, and `spend_money`, authorization is granted only when a current proposal still matches a named human approval and that approval has not expired or already been used.
+**A proposal id is not a reusable permission coupon.**
+
+This public sample comes from my private research and acquisition tooling. It makes evidence ranking and approval semantics reviewable; I can build and adapt the surrounding research applications, review workflows, and connectors for different requirements.
+
+## Review: approve the content, not just the id
 
 ```mermaid
 sequenceDiagram
     participant R as Research path
     participant G as ActionGate
     participant H as Human reviewer
-    participant E as Effect boundary
-
-    R->>G: authorize(read-only action)
-    G-->>R: allow read_only; no approval round-trip
-
-    R->>G: propose(evidence + irreversible action)
-    G->>G: require evidence
-    G-->>R: proposal accepted
-    R-->>H: present exact proposal for review
-    opt Human approves the exact proposal
-        H->>G: approve(proposal, approved_by)
-        G->>G: re-check evidence
-        G->>G: compute/store payload_digest + TTL
+    R->>G: Propose with evidence
+    alt Evidence missing
+        G-->>R: Reject proposal
+    else Evidence present
+        G-->>R: Proposal accepted
+        R-->>H: Present exact proposal
+        opt Human approves
+            H->>G: approve(proposal, approved_by)
+            G->>G: Require evidence + named person
+            G->>G: Store digest + TTL
+        end
     end
+    Note over R,G: authorize checks the current content digest
+```
 
-    Note over R,G: Content may change after approval; authorize checks the current digest.
-    R->>G: authorize(current proposal)
-    alt proposal id already acted
-        G-->>R: refuse already_acted
-    else no approval exists
-        G-->>R: refuse no_approval
-    else digest changed after approval
-        G-->>R: refuse proposal_changed_after_approval
-    else approval expired
-        G-->>R: refuse approval_expired
-    else live, matching, unused approval
-        G->>G: mark proposal id acted
-        G-->>R: allow once
-        R->>E: cross the effect boundary
-    end
+## Authorization: check again at the action boundary
+
+`submit_public`, `contact_third_party`, and `spend_money` take the approval path below. The caller owns the external action after the gate returns.
+
+```mermaid
+flowchart LR
+    A["<b>Current proposal</b>"] --> R{"Read-only?"}
+    R -- Yes --> L["<b>Allow</b><br/>read_only"]
+    R -- No --> G{"Approval checks pass?"}
+    G -- No --> X["<b>Refuse</b><br/>used, missing,<br/>changed or expired"]
+    G -- Yes --> O["<b>Mark acted</b><br/>Allow once"]
+    classDef input fill:#e8e6df,stroke:#55534a,color:#20201d,stroke-width:2px;
+    classDef pass fill:#d2e5d8,stroke:#38734d,color:#183923,stroke-width:2px;
+    classDef stop fill:#f4dadd,stroke:#b14253,color:#611c29,stroke-width:2px;
+    class A,R,G input;
+    class L,O pass;
+    class X stop;
 ```
 
 ## The trust boundary
