@@ -23,6 +23,7 @@ IRREVERSIBLE_ACTIONS = frozenset(
 class Outcome(str, Enum):
     PROPOSED = "proposed"
     APPROVED = "approved"
+    READ_ONLY = "read_only"
     REFUSED = "refused"
     EXPIRED = "expired"
     SUPERSEDED = "superseded"

@@ -76,6 +76,11 @@ def test_a_proposal_cannot_be_proposed_without_evidence() -> None:
         ActionGate().propose(proposal(evidence=()))
 
 
+def test_approval_cannot_bypass_the_evidence_requirement() -> None:
+    with pytest.raises(PolicyError, match="carries no evidence"):
+        ActionGate().approve(proposal(evidence=()), approved_by="operator")
+
+
 def test_an_approval_must_name_a_person() -> None:
     gate = ActionGate()
     with pytest.raises(PolicyError):
