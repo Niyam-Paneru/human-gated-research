@@ -13,16 +13,16 @@ sequenceDiagram
     participant R as Research path
     participant G as ActionGate
     participant H as Human reviewer
-    R->>G: <b>Propose with evidence</b>
+    R->>G: Propose with evidence
     alt Evidence missing
-        G-->>R: <b>Reject proposal</b>
+        G-->>R: Reject proposal
     else Evidence present
         G-->>R: Proposal accepted
         R-->>H: Present exact proposal
         opt Human approves
             H->>G: approve(proposal, approved_by)
             G->>G: Require evidence + named person
-            G->>G: <b>Store digest + TTL</b>
+            G->>G: Store digest + TTL
         end
     end
     Note over R,G: authorize checks the current content digest
