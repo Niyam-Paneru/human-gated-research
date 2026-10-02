@@ -82,7 +82,7 @@ Tests cover evidence-free approval rejection, the read-only bypass, missing appr
 
 Verification commands and expected checks: [`docs/verification.md`](docs/verification.md).
 
-## Boundary and provenance
+## What approval does not prove
 
 This repository demonstrates approval semantics, not a production authorization service. Approvals, acted ids, and audit history are in-memory; the approver name is not authenticated; and the repo contains no browser credentials, payment method, email account, or external-action transport.
 
