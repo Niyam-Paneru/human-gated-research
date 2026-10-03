@@ -49,11 +49,7 @@ flowchart LR
 
 ## The trust boundary
 
-For irreversible actions, the path is:
-
-**evidence → proposal → canonical digest → named human approval → authorization checks → allow once**
-
-`Proposal.payload_digest` hashes a canonical JSON payload containing the proposal id, claim id, action, target, rationale, and normalized evidence. Changing approval-relevant content changes the digest; keeping the same proposal id does not preserve authorization. A proposal id is an identifier, not a reusable permission coupon.
+`Proposal.payload_digest` hashes a canonical JSON payload containing the proposal id, claim id, action, target, rationale, and normalized evidence. Changing any of that content invalidates the approval, even if the proposal id stays the same.
 
 Authorization checks the current state in this order:
 
@@ -66,7 +62,7 @@ Authorization checks the current state in this order:
 | Approval is older than its TTL | refuse with `approval_expired` |
 | All irreversible-action checks pass | mark the proposal id acted, record approval, allow once |
 
-Approval also requires a non-empty `approved_by` value. In this demo that value names the approver; it does **not** authenticate the person's identity.
+Approval requires a non-empty `approved_by` name; identity authentication is outside this sample.
 
 ## Evidence before action
 
@@ -74,7 +70,7 @@ Approval also requires a non-empty `approved_by` value. In this demo that value 
 
 `ActionGate.propose()` rejects a proposal with no evidence, and `ActionGate.approve()` reuses that same check. Skipping the explicit `propose()` call therefore cannot create an approval for an evidence-free irreversible proposal.
 
-The approval digest includes each evidence item's source, timestamp, summary, and independent group, so changing the evidence grouping also changes the approval identity.
+Evidence grouping is part of the digest; changing it invalidates approval too.
 
 ## Where to inspect
 
