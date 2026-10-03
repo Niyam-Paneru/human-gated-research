@@ -9,7 +9,17 @@ This public sample comes from my private research and acquisition tooling. It ma
 ## Review: approve the content, not just the id
 
 ```mermaid
+---
+config:
+  sequence:
+    actorMargin: 50
+    messageMargin: 28
+    mirrorActors: false
+    wrap: false
+---
 sequenceDiagram
+    accTitle: Review: approve the content, not just the id
+    accDescr: Sequence for review: approve the content, not just the id.
     participant R as Research path
     participant G as ActionGate
     participant H as Human reviewer
@@ -33,15 +43,24 @@ sequenceDiagram
 `submit_public`, `contact_third_party`, and `spend_money` take the approval path below. The caller owns the external action after the gate returns.
 
 ```mermaid
-flowchart LR
-    A["<b>Current proposal</b>"] --> R{"Read-only?"}
-    R -- Yes --> L["<b>Allow</b><br/>read_only"]
+---
+config:
+  flowchart:
+    curve: linear
+    nodeSpacing: 28
+    rankSpacing: 42
+---
+flowchart TB
+    accTitle: Authorization: check again at the action boundary
+    accDescr: Decision flow for authorization: check again at the action boundary.
+    A["Current proposal"] --> R{"Read-only?"}
+    R -- Yes --> L["Allow<br/>read_only"]
     R -- No --> G{"Approval checks pass?"}
-    G -- No --> X["<b>Refuse</b><br/>used, missing,<br/>changed or expired"]
-    G -- Yes --> O["<b>Mark acted</b><br/>Allow once"]
-    classDef input fill:#e8e6df,stroke:#55534a,color:#20201d,stroke-width:2px;
-    classDef pass fill:#d2e5d8,stroke:#38734d,color:#183923,stroke-width:2px;
-    classDef stop fill:#f4dadd,stroke:#b14253,color:#611c29,stroke-width:2px;
+    G -- No --> X["Refuse<br/>used, missing,<br/>changed or expired"]
+    G -- Yes --> O["Mark acted<br/>Allow once"]
+    classDef input stroke-width:1.5px;
+    classDef pass stroke-width:2.5px;
+    classDef stop stroke-width:2px,stroke-dasharray:5 3;
     class A,R,G input;
     class L,O pass;
     class X stop;
