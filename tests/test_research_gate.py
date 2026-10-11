@@ -209,7 +209,7 @@ def test_approval_rejects_unrecognized_actions_before_digesting(action: object) 
         ActionGate().approve(proposal(action=action), approved_by="operator")
 
 
-@pytest.mark.parametrize("ttl", [0.0, -1.0, float("nan"), float("inf")])
+@pytest.mark.parametrize("ttl", [0.0, -1.0, float("nan"), float("inf"), 10**1000])
 def test_invalid_ttl_cannot_create_an_approval(ttl: float) -> None:
     gate = ActionGate(ttl_seconds=ttl, now=lambda: 100.0)
     with pytest.raises(PolicyError, match="invalid_approval_timing"):
@@ -217,7 +217,7 @@ def test_invalid_ttl_cannot_create_an_approval(ttl: float) -> None:
     assert gate.audit() == []
 
 
-@pytest.mark.parametrize("start", [float("nan"), float("inf"), float("-inf")])
+@pytest.mark.parametrize("start", [float("nan"), float("inf"), float("-inf"), 10**1000])
 def test_invalid_grant_clock_refuses_approval(start: float) -> None:
     gate = ActionGate(now=lambda: start)
     with pytest.raises(PolicyError, match="invalid_approval_timing"):
@@ -225,7 +225,7 @@ def test_invalid_grant_clock_refuses_approval(start: float) -> None:
     assert gate.audit() == []
 
 
-@pytest.mark.parametrize("later", [float("nan"), float("inf"), 99.0])
+@pytest.mark.parametrize("later", [float("nan"), float("inf"), 99.0, 10**1000])
 def test_nonfinite_or_rolled_back_clock_does_not_extend_approval(later: float) -> None:
     clock = {"time": 100.0}
     gate = ActionGate(ttl_seconds=30.0, now=lambda: clock["time"])
