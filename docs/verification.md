@@ -21,3 +21,5 @@ The behavior suite covers the authorization boundary directly:
 | named approver required | `test_an_approval_must_name_a_person` |
 
 CircleCI additionally compiles `src/`, runs the walkthrough, and verifies that the public documentation and provenance files are present.
+
+Additional regression cases verify that unsupported action values (including raw `"read_only"` strings) cannot inherit read-only permission, and that invalid/rolled-back clocks and non-positive TTLs cannot authorize irreversible work.
