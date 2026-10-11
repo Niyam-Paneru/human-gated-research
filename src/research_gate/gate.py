@@ -23,7 +23,12 @@ class PolicyError(Exception):
 
 
 def _finite_number(value: object) -> bool:
-    return type(value) in (int, float) and isfinite(value)
+    if type(value) not in (int, float):
+        return False
+    try:
+        return isfinite(value)
+    except OverflowError:
+        return False
 
 
 def _valid_ttl(value: object) -> bool:
