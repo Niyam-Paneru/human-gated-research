@@ -188,3 +188,59 @@ def test_digest_changes_when_the_target_changes() -> None:
     a = proposal()
     b = proposal(target="https://someone-else.example/contact")
     assert a.payload_digest != b.payload_digest
+
+
+# --- fail-closed authorization on unknown actions and invalid clocks --------
+
+
+@pytest.mark.parametrize("action", ["delete_everything", "read_only", "", None, 123])
+def test_unrecognized_action_never_inherits_read_only_authority(action: object) -> None:
+    gate = ActionGate()
+    # Dataclass type annotations are not runtime validation; real integrations
+    # can still pass untrusted strings or unknown action values.
+    malformed = proposal(action=action)
+    assert gate.authorize(malformed) == (False, "unsupported_action")
+    assert gate.audit() == [("p1", Outcome.REFUSED, "")]
+
+
+@pytest.mark.parametrize("action", ["delete_everything", "read_only", None])
+def test_approval_rejects_unrecognized_actions_before_digesting(action: object) -> None:
+    with pytest.raises(PolicyError, match="unsupported_action"):
+        ActionGate().approve(proposal(action=action), approved_by="operator")
+
+
+@pytest.mark.parametrize("ttl", [0.0, -1.0, float("nan"), float("inf")])
+def test_invalid_ttl_cannot_create_an_approval(ttl: float) -> None:
+    gate = ActionGate(ttl_seconds=ttl, now=lambda: 100.0)
+    with pytest.raises(PolicyError, match="invalid_approval_timing"):
+        gate.approve(proposal(), approved_by="operator")
+    assert gate.audit() == []
+
+
+@pytest.mark.parametrize("start", [float("nan"), float("inf"), float("-inf")])
+def test_invalid_grant_clock_refuses_approval(start: float) -> None:
+    gate = ActionGate(now=lambda: start)
+    with pytest.raises(PolicyError, match="invalid_approval_timing"):
+        gate.approve(proposal(), approved_by="operator")
+    assert gate.audit() == []
+
+
+@pytest.mark.parametrize("later", [float("nan"), float("inf"), 99.0])
+def test_nonfinite_or_rolled_back_clock_does_not_extend_approval(later: float) -> None:
+    clock = {"time": 100.0}
+    gate = ActionGate(ttl_seconds=30.0, now=lambda: clock["time"])
+    item = proposal()
+    gate.approve(item, approved_by="operator")
+    clock["time"] = later
+    assert gate.authorize(item) == (False, "invalid_approval_clock")
+    assert gate.audit()[-1] == ("p1", Outcome.REFUSED, "")
+
+
+def test_exact_ttl_boundary_is_permitted_once_and_replay_is_blocked() -> None:
+    clock = {"time": 100.0}
+    gate = ActionGate(ttl_seconds=30.0, now=lambda: clock["time"])
+    item = proposal()
+    gate.approve(item, approved_by="operator")
+    clock["time"] = 130.0
+    assert gate.authorize(item) == (True, "approved")
+    assert gate.authorize(item) == (False, "already_acted")
