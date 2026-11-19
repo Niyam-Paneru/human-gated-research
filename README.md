@@ -17,14 +17,67 @@ Even without tampering, `no_approval`, `approval_expired`, and `already_acted` s
 
 For evidence ranking, the library counts independent source **groups**, not how many times the same article got reposted. Ten copies of one source are still one source wearing ten hats.
 
-## Make it refuse things
+## The approval has to survive two checks
 
-```sh
-PYTHONPATH=src python -m research_gate.demo
-python -m pytest
+Approval is tied to the proposal the reviewer actually saw.
+
+```mermaid
+---
+config:
+  sequence:
+    actorMargin: 50
+    messageMargin: 28
+    mirrorActors: false
+    wrap: false
+---
+sequenceDiagram
+    accTitle: Review: approve the content, not just the id
+    accDescr: Sequence for review: approve the content, not just the id.
+    participant R as Research path
+    participant G as ActionGate
+    participant H as Human reviewer
+    R->>G: Propose with evidence
+    alt Evidence missing
+        G-->>R: Reject proposal
+    else Evidence present
+        G-->>R: Proposal accepted
+        R-->>H: Present exact proposal
+        opt Human approves
+            H->>G: approve(proposal, approved_by)
+            G->>G: Require evidence + named person
+            G->>G: Store digest + TTL
+        end
+    end
+    Note over R,G: authorize checks the current content digest
 ```
 
-Python 3.10+ and `pytest`. The tests exercise missing evidence, read-only behavior, expired approvals, replay, content mutation, and the one-use allowance. See [the test map](docs/verification.md).
+The action boundary asks again; an old approval isn't a lifetime subscription.
+
+```mermaid
+---
+config:
+  flowchart:
+    curve: linear
+    nodeSpacing: 28
+    rankSpacing: 42
+---
+flowchart TB
+    accTitle: Authorization: check again at the action boundary
+    accDescr: Decision flow for authorization: check again at the action boundary.
+    A["Current proposal"] --> R{"Read-only?"}
+    R -- Yes --> L["Allow<br/>read_only"]
+    R -- No --> G{"Approval checks pass?"}
+    G -- No --> X["Refuse<br/>used, missing,<br/>changed or expired"]
+    G -- Yes --> O["Mark acted<br/>Allow once"]
+    classDef input stroke-width:1.5px;
+    classDef pass stroke-width:2.5px;
+    classDef stop stroke-width:2px,stroke-dasharray:5 3;
+    class A,R,G input;
+    class L,O pass;
+    class X stop;
+```
+
+The [test map](docs/verification.md) covers missing evidence, read-only behavior, expired approvals, replay, content mutation, and the one-use allowance.
 
 The code: [proposal model](src/research_gate/proposal.py), [canonical digest](src/research_gate/digest.py), [the gate](src/research_gate/gate.py), [source-group handling](src/research_gate/evidence.py).
 
