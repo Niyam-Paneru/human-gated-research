@@ -1,10 +1,17 @@
 # Human-Gated Research
 
-Evidence-backed research with approval tied to the exact proposal a person reviewed. Read-only work can proceed; consequential actions require a current, matching, unused approval.
+A research agent proposes an action. Somebody approves it. What if the agent then edits the recipient or message? This Python gate binds **approval to the exact proposal contents**, not just an ID.
 
-**A proposal id is not a reusable permission coupon.**
+Evidence-free, altered, expired, or already-used approvals cannot authorize a consequential action. “But it was approved earlier” is not a security model.
 
-This public sample comes from my private research and acquisition tooling. It makes evidence ranking and approval semantics reviewable; I can build and adapt the surrounding research applications, review workflows, and connectors for different requirements.
+**Try it / check the behavior:**
+
+```bash
+PYTHONPATH=src python -m research_gate.demo
+python -m pytest
+```
+
+In-memory approval semantics only; no authenticated identities or real external contact. [Verification](docs/verification.md).
 
 ## Review: approve the content, not just the id
 
