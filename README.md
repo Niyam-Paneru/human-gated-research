@@ -51,31 +51,7 @@ sequenceDiagram
     Note over R,G: authorize checks the current content digest
 ```
 
-The action boundary asks again; an old approval isn't a lifetime subscription.
-
-```mermaid
----
-config:
-  flowchart:
-    curve: linear
-    nodeSpacing: 28
-    rankSpacing: 42
----
-flowchart TB
-    accTitle: Authorization: check again at the action boundary
-    accDescr: Decision flow for authorization: check again at the action boundary.
-    A["Current proposal"] --> R{"Read-only?"}
-    R -- Yes --> L["Allow<br/>read_only"]
-    R -- No --> G{"Approval checks pass?"}
-    G -- No --> X["Refuse<br/>used, missing,<br/>changed or expired"]
-    G -- Yes --> O["Mark acted<br/>Allow once"]
-    classDef input stroke-width:1.5px;
-    classDef pass stroke-width:2.5px;
-    classDef stop stroke-width:2px,stroke-dasharray:5 3;
-    class A,R,G input;
-    class L,O pass;
-    class X stop;
-```
+At the action boundary, the gate checks the approval against the **current** proposal. Changed contents, expiry, or a previously used approval block a consequential action. Read-only work remains a separate path.
 
 The [test map](docs/verification.md) covers missing evidence, read-only behavior, expired approvals, replay, content mutation, and the one-use allowance.
 
