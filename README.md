@@ -1,64 +1,33 @@
 # Human-Gated Research
 
-Here's a bad idea: a person approves a research agent's proposal, the agent changes the target, then sends it anyway because **the approval ID is still valid**.
+A research agent drafts an email. A human approves it. Then someone changes the recipient.
 
-This Python project exists to make that particular trick fail.
+Should the approval still count? Only if you believe signatures are decorative stickers.
 
-The thing being approved isn't just an ID. It's a digest of the **claim, action, target, rationale, and evidence** (plus the proposal identity). Change the proposal and the old approval stops matching. Approvals also expire and can't be reused for a second consequential action.
+This Python module binds approval to the **exact proposal**: its claim, action, target, rationale, evidence, and proposal identity. Change those details and the old approval no longer fits.
 
-## A tiny thought experiment
+## A tiny approval disaster, prevented
 
-1. Research finds evidence for a claim and prepares a proposal.
-2. A reviewer approves that *exact version*.
-3. Someone changes the recipient or evidence.
-4. The gate refuses: `proposal_changed_after_approval`.
+A reviewer approves “send report A to recipient X.” The proposal is changed to recipient Y.
 
-Even without tampering, `no_approval`, `approval_expired`, and `already_acted` stop the action when appropriate. Read-only work can proceed without approval.
+The result isn't “close enough.” It's **proposal_changed_after_approval**.
 
-For evidence ranking, the library counts independent source **groups**, not how many times the same article got reposted. Ten copies of one source are still one source wearing ten hats.
+| Situation | What the gate does |
+| --- | --- |
+| Missing required evidence | Reject proposal |
+| Read-only research, no consequential action | Allow without write approval |
+| No approval, expired approval, or used approval | Block the action |
+| Proposal altered after review | Block; old content digest no longer matches |
+| Exact approved proposal within its one-use window | Eligible for the approved action |
 
-## The approval has to survive two checks
+The digest covers the proposal content, not merely an approval ID. An approval also expires and cannot be used for a second consequential action. Ten reposts of the same article still count as **one source group**, not ten independent witnesses in a trench coat.
 
-Approval is tied to the proposal the reviewer actually saw.
+## The files behind the gate
 
-```mermaid
----
-config:
-  sequence:
-    actorMargin: 50
-    messageMargin: 28
-    mirrorActors: false
-    wrap: false
----
-sequenceDiagram
-    accTitle: Review: approve the content, not just the id
-    accDescr: Sequence for review: approve the content, not just the id.
-    participant R as Research path
-    participant G as ActionGate
-    participant H as Human reviewer
-    R->>G: Propose with evidence
-    alt Evidence missing
-        G-->>R: Reject proposal
-    else Evidence present
-        G-->>R: Proposal accepted
-        R-->>H: Present exact proposal
-        opt Human approves
-            H->>G: approve(proposal, approved_by)
-            G->>G: Require evidence + named person
-            G->>G: Store digest + TTL
-        end
-    end
-    Note over R,G: authorize checks the current content digest
-```
+[Proposal model](src/research_gate/proposal.py) · [digest](src/research_gate/digest.py) · [action gate](src/research_gate/gate.py) · [source grouping](src/research_gate/evidence.py) · [tests and verification](docs/verification.md).
 
-At the action boundary, the gate checks the approval against the **current** proposal. Changed contents, expiry, or a previously used approval block a consequential action. Read-only work remains a separate path.
+## A very important limitation
 
-The [test map](docs/verification.md) covers missing evidence, read-only behavior, expired approvals, replay, content mutation, and the one-use allowance.
+Approvals are **in memory** and approved_by is a supplied name, **not authenticated identity**. There's no mail transport, browser, production authorization service, or payment integration here.
 
-The code: [proposal model](src/research_gate/proposal.py), [canonical digest](src/research_gate/digest.py), [the gate](src/research_gate/gate.py), [source-group handling](src/research_gate/evidence.py).
-
-## Important catch
-
-These approvals live **in memory**, and `approved_by` is just a supplied name. It is not identity authentication. There is no browser, payment method, email transport, or production authorization service here.
-
-That's a small, testable rule for a bigger application to build around, not permission to send real things. [Security notes](SECURITY.md) · [provenance](PROVENANCE.md).
+It's a rule for an application to enforce, not an application that can safely send things by itself. Approval should follow the content, not the nearest reassuring checkbox. [Security notes](SECURITY.md) · [provenance](PROVENANCE.md).
