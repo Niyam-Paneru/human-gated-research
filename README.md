@@ -4,7 +4,7 @@ You approve an agent's proposal to send a report to Alice. The agent changes the
 
 That's not approval. That's a sticker.
 
-This Python module ties approval to the **actual content** — claim, action, target, rationale, evidence, and proposal identity. Change the recipient (or anything else in that digest) and the old approval becomes useless.
+This Python module binds approval to the specific content: claim, action, target, rationale, evidence and proposal identity. Change the reviewed version and the old approval can't authorize it.
 
 ## A green checkmark is not a blank cheque
 
