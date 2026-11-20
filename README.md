@@ -1,16 +1,14 @@
 # Human-Gated Research
 
-A research agent drafts an email. A human approves it. Then someone changes the recipient.
+Imagine approving an email addressed to Alice. Then the agent quietly swaps Alice for Bob and sends it anyway because the approval ID is still there.
 
-The reviewer approved the original proposal, not the revised one.
+Congratulations: the checkmark has become a souvenir.
 
-This Python module binds approval to the **exact proposal**: its claim, action, target, rationale, evidence, and proposal identity. Change those details and the old approval no longer fits.
+This Python module binds approval to the **exact proposal** — its claim, action, target, rationale, evidence, and identity. Change any of those details and the old approval no longer counts.
 
-## What happens if the proposal changes?
+## What was actually approved?
 
-A reviewer approves “send report A to recipient X.” The proposal is changed to recipient Y.
-
-The result isn't “close enough.” It's **proposal_changed_after_approval**.
+Approve “send report A to recipient X,” then swap the destination to Y. The gate doesn't shrug and say “close enough”; it returns **proposal_changed_after_approval**.
 
 | Situation | What the gate does |
 | --- | --- |
