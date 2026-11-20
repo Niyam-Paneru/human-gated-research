@@ -8,7 +8,7 @@ This Python module ties approval to the **actual content** — claim, action, ta
 
 ## A green checkmark is not a blank cheque
 
-Approve “send report A to recipient X,” then swap the destination to Y. The gate doesn't shrug and say “close enough”; it returns **proposal_changed_after_approval**.
+An approval applies to the reviewed version, not whatever the agent happens to have in its hands five minutes later. Swap the destination or evidence and the gate returns **proposal_changed_after_approval**.
 
 | Situation | What the gate does |
 | --- | --- |
