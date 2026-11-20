@@ -1,12 +1,12 @@
 # Human-Gated Research
 
-Imagine approving an email addressed to Alice. Then the agent quietly swaps Alice for Bob and sends it anyway because the approval ID is still there.
+You approve an agent's proposal to send a report to Alice. The agent changes the recipient to Bob but keeps the same green **Approved** badge.
 
-Congratulations: the checkmark has become a souvenir.
+That's not approval. That's a sticker.
 
-This Python module binds approval to the **exact proposal** — its claim, action, target, rationale, evidence, and identity. Change any of those details and the old approval no longer counts.
+This Python module ties approval to the **actual content** — claim, action, target, rationale, evidence, and proposal identity. Change the recipient (or anything else in that digest) and the old approval becomes useless.
 
-## What was actually approved?
+## A green checkmark is not a blank cheque
 
 Approve “send report A to recipient X,” then swap the destination to Y. The gate doesn't shrug and say “close enough”; it returns **proposal_changed_after_approval**.
 
@@ -18,7 +18,7 @@ Approve “send report A to recipient X,” then swap the destination to Y. The 
 | Proposal altered after review | Block; old content digest no longer matches |
 | Exact approved proposal within its one-use window | Eligible for the approved action |
 
-The digest covers the proposal content, not merely an approval ID. An approval also expires and cannot be used for a second consequential action. Ten reposts of one article still count as **one source group**, not ten independent sources.
+The digest covers the proposal, not merely an approval ID. Approval expires and is single-use. And ten articles repeating the same source are still **one source group** — a photocopier is not an eyewitness.
 
 ## The files behind the gate
 
